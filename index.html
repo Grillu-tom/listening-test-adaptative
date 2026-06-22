@@ -137,9 +137,9 @@ async function startTest() {
 
 function buildTrial() {
   document.getElementById("trialCounter").innerText =
-  `Trial ${currentTrial + 1}/${trials.length}`;
-  
-  const intruder = trials[currentTrial];
+`Trial ${trialNumber}/${MAX_TRIALS}`;
+
+const intruder = files[currentIndex];
 
   const matchIsA = Math.random() < 0.5;
 
@@ -282,18 +282,30 @@ function shuffle(array) {
   }
   return array;
 }
+
+const files = [
+  "musicien/audio_f-lim_8000_Hz_rayleigh_musician.wav", // 0
+  "musicien/audio_f-lim_6000_Hz_rayleigh_musician.wav", // 1
+  "musicien/audio_f-lim_4000_Hz_rayleigh_musician.wav", // 2
+  "musicien/audio_f-lim_3800_Hz_rayleigh_musician.wav", // 3
+  "musicien/audio_f-lim_3400_Hz_rayleigh_musician.wav", // 4
+  "musicien/audio_f-lim_3200_Hz_rayleigh_musician.wav", // 5
+  "musicien/audio_f-lim_3000_Hz_rayleigh_musician.wav", // 6
+  "musicien/audio_f-lim_2800_Hz_rayleigh_musician.wav", // 7
+  "musicien/audio_f-lim_2000_Hz_rayleigh_musician.wav", // 8
+  "musicien/audio_f-lim_1800_Hz_rayleigh_musician.wav", // 9
+  "musicien/audio_f-lim_1600_Hz_rayleigh_musician.wav"  // 10
+];
+
+let currentIndex = 10; // départ à 1600 Hz
+let consecutiveCorrect = 0;
+
+let trialNumber = 1;
+const MAX_TRIALS = 30;
+
 async function loadTrials() {
-
-  const response = await fetch("audio-list.json");
-
-  trials = shuffle(await response.json());
-
   buildTrial();
-}  
-let trials = [];
-
-let currentTrial = 0;
-
+}
 let allResults = [];
 
 let comparisonFiles = [];
@@ -433,11 +445,47 @@ async function submitTest() {
   const isCorrect =
     selected === correctItem.visibleLabel;
 
+  if (isCorrect) {
+
+  consecutiveCorrect++;
+
+  if (consecutiveCorrect >= 3) {
+
+    currentIndex = Math.floor(currentIndex / 2);
+
+    consecutiveCorrect = 0;
+  }
+
+} else {
+
+  if (currentIndex === 0) {
+
+    currentIndex = 1;
+
+  } else {
+
+    currentIndex = Math.min(
+      files.length - 1,
+      Math.ceil(currentIndex * 1.5)
+    );
+
+  }
+
+  consecutiveCorrect = 0;
+}
+  const presentedIndex = currentIndex;
+const currentFile = files[presentedIndex];
+  
+  
   allResults.push({
 
-  trial: currentTrial + 1,
+  index: presentedIndex,
+    
+  trial: trialNumber,
 
-  intruder: trials[currentTrial],
+  file: currentFile,
+
+  index: currentIndex,
 
   selected: selected,
 
@@ -451,9 +499,9 @@ async function submitTest() {
 
 });
 
-currentTrial++;
+trialNumber++;
 
-if (currentTrial < trials.length) {
+if (trialNumber <= MAX_TRIALS) {
 
   document.querySelector(
     'input[name="comparison"]:checked'
@@ -482,10 +530,15 @@ const responses = {};
     chiave: `trial${trialNum}`
   };
 
-  responses[`TRIAL${trialNum}_INTRUDER`] = {
-    answer: result.intruder,
-    chiave: `trial${trialNum}`
-  };
+  responses[`TRIAL${trialNum}_FILE`] = {
+  answer: result.file,
+  chiave: `trial${trialNum}`
+};
+
+responses[`TRIAL${trialNum}_INDEX`] = {
+  answer: result.index,
+  chiave: `trial${trialNum}`
+};
 
 });
 
