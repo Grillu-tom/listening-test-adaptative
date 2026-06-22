@@ -300,6 +300,9 @@ const files = [
 let currentIndex = 10; // départ à 1600 Hz
 let consecutiveCorrect = 0;
 
+let indexHistory = [];
+let stagnationCount = 0;
+  
 let trialNumber = 1;
 const MAX_TRIALS = 30;
 
@@ -441,10 +444,14 @@ async function submitTest() {
     comparisonFiles.find(
       item => item.isCorrect
     );
-
+  
+  
   const isCorrect =
     selected === correctItem.visibleLabel;
 
+const presentedIndex = currentIndex;
+const currentFile = files[presentedIndex];
+  
   if (isCorrect) {
 
   consecutiveCorrect++;
@@ -468,13 +475,26 @@ async function submitTest() {
       files.length - 1,
       Math.ceil(currentIndex * 1.5)
     );
+  indexHistory.push(currentIndex);
 
+if (indexHistory.length >= 6) {
+
+  const n = indexHistory.length;
+
+  if (
+    indexHistory[n - 1] === indexHistory[n - 3] &&
+    indexHistory[n - 3] === indexHistory[n - 5] &&
+    indexHistory[n - 2] === indexHistory[n - 4] &&
+    indexHistory[n - 4] === indexHistory[n - 6] &&
+    indexHistory[n - 1] !== indexHistory[n - 2]
+  ) {
+    stagnationCount = 3;
+  }
+}
   }
 
   consecutiveCorrect = 0;
 }
-  const presentedIndex = currentIndex;
-const currentFile = files[presentedIndex];
   
   
   allResults.push({
@@ -484,8 +504,6 @@ const currentFile = files[presentedIndex];
   trial: trialNumber,
 
   file: currentFile,
-
-  index: currentIndex,
 
   selected: selected,
 
@@ -501,7 +519,10 @@ const currentFile = files[presentedIndex];
 
 trialNumber++;
 
-if (trialNumber <= MAX_TRIALS) {
+if (
+  trialNumber <= MAX_TRIALS &&
+  stagnationCount < 3
+) {
 
   document.querySelector(
     'input[name="comparison"]:checked'
@@ -568,6 +589,13 @@ responses.YEARS_PRACTICE = {
 };
 
   console.log(responses);
+  responses.STOP_REASON = {
+  answer:
+    stagnationCount >= 3
+      ? "stagnation"
+      : "max_trials",
+  chiave: "experiment"
+};
 
   try {
 
