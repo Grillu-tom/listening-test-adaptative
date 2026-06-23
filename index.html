@@ -302,6 +302,8 @@ let consecutiveCorrect = 0;
 
 let indexHistory = [];
 let stagnationCount = 0;
+
+let hardestLevelValidations = 0;
   
 let trialNumber = 1;
 const MAX_TRIALS = 30;
@@ -457,10 +459,18 @@ const currentFile = files[presentedIndex];
 
   if (consecutiveCorrect >= 3) {
 
+  if (currentIndex === 0) {
+
+    hardestLevelValidations++;
+
+  } else {
+
     currentIndex = Math.floor(currentIndex / 2);
 
-    consecutiveCorrect = 0;
   }
+
+  consecutiveCorrect = 0;
+}
 
 } else {
 
@@ -523,7 +533,8 @@ trialNumber++;
 
 if (
   trialNumber <= MAX_TRIALS &&
-  stagnationCount < 3
+  stagnationCount < 3 &&
+  hardestLevelValidations < 3
 ) {
 
   document.querySelector(
@@ -594,7 +605,9 @@ responses.YEARS_PRACTICE = {
   responses.STOP_REASON = {
   answer:
     stagnationCount >= 3
-      ? "stagnation"
+      ? "oscillation"
+      : hardestLevelValidations >= 3
+      ? "hardest_level_validated"
       : "max_trials",
   chiave: "experiment"
 };
