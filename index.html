@@ -1,3 +1,16 @@
+<style>
+#comparisonContainer {
+  display: flex;
+  justify-content: center;
+  gap: 50px;
+  align-items: flex-start;
+}
+
+.audio-block {
+  text-align: center;
+}
+</style>
+
 <div id="introPage">
 
   <h1>Comparison between synthesized guitar sounds</h1>
@@ -170,28 +183,30 @@ const intruder = files[currentIndex];
 
     container.innerHTML += `
 
-      <audio id="audio_${index}">
-        <source src="${item.file}" type="audio/wav">
-      </audio>
+<div class="audio-block">
 
-      <button onclick="playOnce('audio_${index}', this, '${item.visibleLabel}')">
-        ▶ Audio ${item.visibleLabel}
-      </button>
+  <audio id="audio_${index}">
+    <source src="${item.file}" type="audio/wav">
+  </audio>
 
-      <br><br>
+  <button onclick="playOnce('audio_${index}', this, '${item.visibleLabel}')">
+    ▶ Audio ${item.visibleLabel}
+  </button>
 
-      <label>
-        <input
-          type="radio"
-          name="comparison"
-          value="${item.visibleLabel}"
-          onchange="checkSelection()">
-        ${item.visibleLabel}
-      </label>
+  <br><br>
 
-      <br><br>
+  <label>
+    <input
+      type="radio"
+      name="comparison"
+      value="${item.visibleLabel}"
+      onchange="checkSelection()">
+    ${item.visibleLabel}
+  </label>
 
-    `;
+</div>
+
+`;
 
   });
 
