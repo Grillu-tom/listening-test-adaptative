@@ -225,7 +225,7 @@ const intruder = files[currentIndex];
     refButton.disabled = false;
     refButton.innerText = "▶ Reference";
   }
-
+listeningStep = "reference";
 }
 
 function toggleInstrument(show) {
@@ -337,9 +337,16 @@ let comparisonFiles = [];
 
 const MAX_PLAYS = 2;
 const playCounts = {};
-
+let listeningStep = "reference";
 function playOnce(audioId, buttonElement, label) {
-
+  if (
+  (listeningStep === "reference" && audioId !== "referenceAudio") ||
+  (listeningStep === "audioA" && audioId !== "audio_0") ||
+  (listeningStep === "audioB" && audioId !== "audio_1")
+) {
+  alert("Please listen in the required order.");
+  return;
+}
   if (!playCounts[audioId]) {
     playCounts[audioId] = 0;
   }
@@ -358,7 +365,15 @@ function playOnce(audioId, buttonElement, label) {
 
   audio.currentTime = 0;
   audio.play();
-
+  if (audioId === "referenceAudio") {
+  listeningStep = "audioA";
+}
+else if (audioId === "audio_0") {
+  listeningStep = "audioB";
+}
+else if (audioId === "audio_1") {
+  listeningStep = "finished";
+}
   const remaining = MAX_PLAYS - playCounts[audioId];
 
   if (remaining > 0) {
@@ -406,9 +421,9 @@ function checkSelection() {
     );
 
   document.getElementById(
-    "submitButton"
-  ).disabled = !selected;
-}
+  "submitButton"
+).disabled =
+  !selected || listeningStep !== "finished";
 
 // =========================
 // SUBMIT
