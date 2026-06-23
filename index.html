@@ -451,7 +451,6 @@ async function submitTest() {
 
 const presentedIndex = currentIndex;
 const currentFile = files[presentedIndex];
-  
   if (isCorrect) {
 
   consecutiveCorrect++;
@@ -475,7 +474,14 @@ const currentFile = files[presentedIndex];
       files.length - 1,
       Math.ceil(currentIndex * 1.5)
     );
-  indexHistory.push(currentIndex);
+
+  }
+
+  consecutiveCorrect = 0;
+}
+
+// Historique des indices
+indexHistory.push(currentIndex);
 
 if (indexHistory.length >= 6) {
 
@@ -490,10 +496,6 @@ if (indexHistory.length >= 6) {
   ) {
     stagnationCount = 3;
   }
-}
-  }
-
-  consecutiveCorrect = 0;
 }
   
   
