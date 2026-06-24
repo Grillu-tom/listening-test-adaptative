@@ -378,7 +378,7 @@ const files = [
   "musicien/audio_f-lim_1600_Hz_rayleigh_musician.wav"  // 10
 ];
 
-let currentIndex = 10; // départ à 1600 Hz
+let currentIndex = Math.floor(files.length / 2);
 let consecutiveCorrect = 0;
 
 let indexHistory = [];
@@ -682,7 +682,7 @@ trialNumber++;
 if (
   trialNumber <= MAX_TRIALS &&
   stagnationCount < 3 &&
-  hardestLevelValidations < 3
+  hardestLevelValidations < 2
 ) {
 
   document.querySelector(
