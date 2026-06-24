@@ -9,6 +9,23 @@
 .audio-block {
   text-align: center;
 }
+
+.indicator {
+  padding: 15px 25px;
+  border: 2px solid #999;
+  border-radius: 8px;
+  font-weight: bold;
+  min-width: 120px;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.indicator.active {
+  background-color: #4CAF50;
+  color: white;
+  border-color: #4CAF50;
+  transform: scale(1.05);
+}
 </style>
 
 <div id="introPage">
@@ -121,7 +138,22 @@ Audio A or Audio B matches the reference.</h2>
 <button id="playSequenceButton" onclick="playSequence()">
   ▶ Play sequence
 </button>
+<div id="playIndicators" style="margin-top:20px; display:flex; justify-content:center; gap:40px;">
 
+  <div id="indicatorRef" class="indicator">
+    Référence
+  </div>
+
+  <div id="indicatorA" class="indicator">
+    Audio A
+  </div>
+
+  <div id="indicatorB" class="indicator">
+    Audio B
+  </div>
+
+</div>
+  
 <hr>
 
 <div id="comparisonContainer"></div>
@@ -227,6 +259,24 @@ const playButton =
 
 playButton.disabled = false;
 playButton.innerText = "▶ Play sequence";
+}
+
+function activateIndicator(id) {
+
+  document
+    .querySelectorAll(".indicator")
+    .forEach(el => el.classList.remove("active"));
+
+  document
+    .getElementById(id)
+    .classList.add("active");
+}
+
+function clearIndicators() {
+
+  document
+    .querySelectorAll(".indicator")
+    .forEach(el => el.classList.remove("active"));
 }
 
 function toggleInstrument(show) {
@@ -425,15 +475,20 @@ async function playSequence() {
   const audioB =
     document.getElementById("audio_1");
 
-  await playAndWait(reference);
+  activateIndicator("indicatorRef");
+await playAndWait(reference);
 
-  await pause(500);
+await pause(500);
 
-  await playAndWait(audioA);
+activateIndicator("indicatorA");
+await playAndWait(audioA);
 
-  await pause(500);
+await pause(500);
 
-  await playAndWait(audioB);
+activateIndicator("indicatorB");
+await playAndWait(audioB);
+
+clearIndicators();
 
   listeningStep = "finished";
 
