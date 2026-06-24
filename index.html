@@ -118,8 +118,8 @@ Audio A or Audio B matches the reference.</h2>
   <source src="reference.wav" type="audio/wav">
 </audio>
 
-<button onclick="playOnce('referenceAudio', this)">
-  ▶ Reference
+<button id="playSequenceButton" onclick="playSequence()">
+  ▶ Play sequence
 </button>
 
 <hr>
@@ -189,11 +189,6 @@ const intruder = files[currentIndex];
     <source src="${item.file}" type="audio/wav">
   </audio>
 
-  <button onclick="playOnce('audio_${index}', this, '${item.visibleLabel}')">
-    ▶ Audio ${item.visibleLabel}
-  </button>
-
-  <br><br>
 
   <label>
     <input
@@ -225,7 +220,13 @@ const intruder = files[currentIndex];
     refButton.disabled = false;
     refButton.innerText = "▶ Reference";
   }
-listeningStep = "reference";
+listeningStep = "notPlayed";
+
+const playButton =
+  document.getElementById("playSequenceButton");
+
+playButton.disabled = false;
+playButton.innerText = "▶ Play sequence";
 }
 
 function toggleInstrument(show) {
@@ -408,6 +409,57 @@ else if (audioId === "audio_1") {
   }
 }
 
+async function playSequence() {
+
+  const button =
+    document.getElementById("playSequenceButton");
+
+  button.disabled = true;
+
+  const reference =
+    document.getElementById("referenceAudio");
+
+  const audioA =
+    document.getElementById("audio_0");
+
+  const audioB =
+    document.getElementById("audio_1");
+
+  await playAndWait(reference);
+
+  await pause(500);
+
+  await playAndWait(audioA);
+
+  await pause(500);
+
+  await playAndWait(audioB);
+
+  listeningStep = "finished";
+
+  button.disabled = false;
+
+  checkSelection();
+}
+
+function playAndWait(audio) {
+
+  return new Promise(resolve => {
+
+    audio.currentTime = 0;
+
+    audio.onended = resolve;
+
+    audio.play();
+  });
+}
+
+function pause(ms) {
+
+  return new Promise(resolve =>
+    setTimeout(resolve, ms)
+  );
+}
 
 // =========================
 // ENABLE SUBMIT
