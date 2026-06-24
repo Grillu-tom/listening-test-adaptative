@@ -498,14 +498,14 @@ await playAndWait(audioA);
 
 
 activateIndicator("indicatorB");
+listeningStep = "finished";
+
+checkSelection();
 await playAndWait(audioB);
 
 clearIndicators();
 
-  listeningStep = "finished";
 
-
-  checkSelection();
 }
 
 function playAndWait(audio) {
