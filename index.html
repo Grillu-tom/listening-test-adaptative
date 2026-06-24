@@ -26,6 +26,16 @@
   border-color: #4CAF50;
   transform: scale(1.05);
 }
+
+.play-sequence-container {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.submit-container {
+  text-align: center;
+  margin-top: 20px;
+}
 </style>
 
 <div id="introPage">
@@ -135,9 +145,12 @@ Audio A or Audio B matches the reference.</h2>
   <source src="reference.wav" type="audio/wav">
 </audio>
 
-<button id="playSequenceButton" onclick="playSequence()">
-  ▶ Play sequence
-</button>
+<div class="play-sequence-container">
+  <button id="playSequenceButton" onclick="playSequence()">
+    ▶ Play sequence
+  </button>
+</div>
+
 <div id="playIndicators" style="margin-top:20px; display:flex; justify-content:center; gap:40px;">
 
   <div id="indicatorRef" class="indicator">
