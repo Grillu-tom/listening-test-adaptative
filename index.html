@@ -221,23 +221,7 @@ comparisonFiles = [
 }
 
 ];
-  comparisonFiles = [
 
-    {
-      visibleLabel: "A",
-      hiddenIdentity: matchIsA ? "MATCH" : "DIFFERENT",
-      file: matchIsA ? "reference.wav" : intruder,
-      isCorrect: matchIsA
-    },
-
-    {
-      visibleLabel: "B",
-      hiddenIdentity: matchIsA ? "DIFFERENT" : "MATCH",
-      file: matchIsA ? intruder : "reference.wav",
-      isCorrect: !matchIsA
-    }
-
-  ];
 
   const container =
     document.getElementById("comparisonContainer");
@@ -516,7 +500,7 @@ clearIndicators();
 
 listeningStep = "finished";
 checkSelection();
-
+}
 function playAndWait(audio) {
 
   return new Promise(resolve => {
@@ -562,7 +546,7 @@ async function submitTest() {
   );
 
   if (!selectedRadio) {
-    alert("Please select Audio A or Audio B.");
+    alert("Sélectionnez la réponse A,B ou C.");
     return;
   }
 
@@ -684,7 +668,7 @@ comparisonFiles
 `${item.visibleLabel}:${item.isCorrect ? "DIFFERENT" : "SAME"}`
 )
 .join(",")
-
+  });
 trialNumber++;
 
 if (
