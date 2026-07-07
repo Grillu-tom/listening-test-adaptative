@@ -136,14 +136,10 @@
   
 <hr>
 
-<h2>Listen to the reference first, then determine whether
-Audio A or Audio B matches the reference.</h2>
+<h2>Ecoute les 3 audios et identifie celui qui est différent</h2>
 
-<p>You can only listen to the excerpts once.</p>
+<p>Deux extraits sont identiques et l'un est différent. Tu ne peux les écouter qu'une fois.</p>
 
-<audio id="referenceAudio">
-  <source src="reference.wav" type="audio/wav">
-</audio>
 
 <div class="play-sequence-container">
   <button id="playSequenceButton" onclick="playSequence()">
@@ -153,16 +149,16 @@ Audio A or Audio B matches the reference.</h2>
 
 <div id="playIndicators" style="margin-top:20px; display:flex; justify-content:center; gap:40px;">
 
-  <div id="indicatorRef" class="indicator">
-    Référence
-  </div>
-
   <div id="indicatorA" class="indicator">
     Audio A
   </div>
 
   <div id="indicatorB" class="indicator">
     Audio B
+  </div>
+
+  <div id="indicatorC" class="indicator">
+    Audio C
   </div>
 
 </div>
@@ -201,8 +197,30 @@ function buildTrial() {
 
 const intruder = files[currentIndex];
 
-  const matchIsA = Math.random() < 0.5;
+const matchIsA = Math.random() < 0.5;
+const positions = shuffle([0,1,2]);
 
+comparisonFiles = [
+
+{
+    visibleLabel: "A",
+    file: positions[0] === 0 ? intruder : "reference.wav",
+    isCorrect: positions[0] === 0
+},
+
+{
+    visibleLabel: "B",
+    file: positions[1] === 0 ? intruder : "reference.wav",
+    isCorrect: positions[1] === 0
+},
+
+{
+    visibleLabel: "C",
+    file: positions[2] === 0 ? intruder : "reference.wav",
+    isCorrect: positions[2] === 0
+}
+
+];
   comparisonFiles = [
 
     {
@@ -481,32 +499,23 @@ async function playSequence() {
 
   button.disabled = true;
 
-  const reference =
-    document.getElementById("referenceAudio");
-
-  const audioA =
-    document.getElementById("audio_0");
-
-  const audioB =
-    document.getElementById("audio_1");
-
-  activateIndicator("indicatorRef");
-await playAndWait(reference);
+const audioA = document.getElementById("audio_0");
+const audioB = document.getElementById("audio_1");
+const audioC = document.getElementById("audio_2");
 
 activateIndicator("indicatorA");
 await playAndWait(audioA);
 
-
 activateIndicator("indicatorB");
-listeningStep = "finished";
-
-checkSelection();
 await playAndWait(audioB);
+
+activateIndicator("indicatorC");
+await playAndWait(audioC);
 
 clearIndicators();
 
-
-}
+listeningStep = "finished";
+checkSelection();
 
 function playAndWait(audio) {
 
@@ -669,13 +678,12 @@ if (indexHistory.length >= 6) {
 
   correct: isCorrect,
 
-  mapping:
-    comparisonFiles
-      .map(item =>
-        `${item.visibleLabel}:${item.hiddenIdentity}`)
-      .join(",")
-
-});
+mapping:
+comparisonFiles
+.map(item =>
+`${item.visibleLabel}:${item.isCorrect ? "DIFFERENT" : "SAME"}`
+)
+.join(",")
 
 trialNumber++;
 
