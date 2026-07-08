@@ -387,6 +387,9 @@ let firstErrorOccurred = false;
 let indexHistory = [];
 let stagnationCount = 0;
 
+let reversalCount = 0;
+let lastDirection = null; // "down" ou "up"
+  
 let hardestLevelValidations = 0;
   
 let trialNumber = 1;
@@ -610,6 +613,10 @@ if (isCorrect) {
       const step = firstErrorOccurred ? 1 : 4;
 
       currentIndex = Math.max(0, currentIndex - step);
+      if (lastDirection === "up") {
+  reversalCount++;
+}
+lastDirection = "down";
 
     }
 
@@ -624,6 +631,10 @@ if (isCorrect) {
     files.length - 1,
     currentIndex + 1
   );
+  if (firstErrorOccurred && lastDirection === "down") {
+  reversalCount++;
+}
+lastDirection = "up";
 
   consecutiveCorrect = 0;
 }
@@ -670,8 +681,8 @@ trialNumber++;
 
 if (
   trialNumber <= MAX_TRIALS &&
-  stagnationCount < 3 &&
-  hardestLevelValidations < 2
+reversalCount < 6 &&
+hardestLevelValidations < 2
 ) {
 
   document.querySelector(
@@ -741,8 +752,8 @@ responses.YEARS_PRACTICE = {
   console.log(responses);
   responses.STOP_REASON = {
   answer:
-    stagnationCount >= 3
-      ? "oscillation"
+    reversalCount >= 6
+      ? "6_reversals"
       : hardestLevelValidations >= 2
       ? "hardest_level_validated"
       : "max_trials",
