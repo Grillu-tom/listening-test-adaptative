@@ -382,6 +382,7 @@ const files = [
 
 let currentIndex = Math.floor(files.length / 2);
 let consecutiveCorrect = 0;
+let firstErrorOccurred = false;
 
 let indexHistory = [];
 let stagnationCount = 0;
@@ -594,39 +595,35 @@ async function submitTest() {
 
 const presentedIndex = currentIndex;
 const currentFile = files[presentedIndex];
-  if (isCorrect) {
+if (isCorrect) {
 
   consecutiveCorrect++;
 
   if (consecutiveCorrect >= 3) {
 
-  if (currentIndex === 0) {
+    if (currentIndex === 0) {
 
-    hardestLevelValidations++;
+      hardestLevelValidations++;
 
-  } else {
+    } else {
 
-    currentIndex = Math.floor(currentIndex / 2);
+      const step = firstErrorOccurred ? 1 : 4;
 
+      currentIndex = Math.max(0, currentIndex - step);
+
+    }
+
+    consecutiveCorrect = 0;
   }
-
-  consecutiveCorrect = 0;
-}
 
 } else {
 
-  if (currentIndex === 0) {
+  firstErrorOccurred = true;
 
-    currentIndex = 1;
-
-  } else {
-
-    currentIndex = Math.min(
-      files.length - 1,
-      Math.ceil(currentIndex * 1.5)
-    );
-
-  }
+  currentIndex = Math.min(
+    files.length - 1,
+    currentIndex + 1
+  );
 
   consecutiveCorrect = 0;
 }
